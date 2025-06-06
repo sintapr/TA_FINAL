@@ -12,10 +12,12 @@
         @endif
 
         <div class="mb-3">
-            <label for="id_fase" class="form-label">Id Fase</label>
-            <input type="text" name="id_fase" class="form-control @error('id_fase') is-invalid @enderror"
-                value="{{ old('id_fase', $fase->id_fase) }}" {{ $fase->exists ? 'readonly' : '' }}>
-            @error('id_fase') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            <label>ID Fase</label>
+            <input type="text" name="id_fase" value="{{ old('id_fase', $fase->id_fase) }}"
+                   class="form-control @error('id_fase') is-invalid @enderror" readonly>
+            @error('id_fase')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
         <div class="mb-3">

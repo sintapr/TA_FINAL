@@ -47,7 +47,7 @@
                                     <td>{{ $k->penglihatan }}</td>
                                     <td>{{ $k->pendengaran }}</td>
                                     <td>{{ $k->gigi }}</td>
-                                    <td>{{ $k->tahunAjaran->tahun ?? '-' }}</td>
+                                    <td>{{ $k->tahunAjaran->tahun_mulai ?? '-' }}</td>
                                     <td>
                                         <a href="{{ route('kondisi-siswa.edit', $k->id_kondisi) }}"
                                             class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>

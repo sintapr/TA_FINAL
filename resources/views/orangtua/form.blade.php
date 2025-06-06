@@ -12,10 +12,13 @@
 
                     <div class="mb-3">
                         <label>ID Orang Tua</label>
-                        <input type="text" name="id_ortu" class="form-control @error('id_ortu') is-invalid @enderror"
-                            value="{{ old('id_ortu', $orangtua->id_ortu) }}" {{ $orangtua->exists ? 'readonly' : '' }}>
-                        @error('id_ortu')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        <input type="text" name="id_ortu" value="{{ old('id_ortu', $orangtua->id_ortu) }}"
+                               class="form-control @error('id_ortu') is-invalid @enderror" readonly>
+                        @error('id_ortu')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
+                    
 
                     <div class="mb-3">
                         <label>NIS</label>

@@ -1,78 +1,60 @@
-@extends('layouts.app')
-@section('title', isset($siswa) ? 'Edit Siswa' : 'Tambah Siswa')
-@section('content')
-    <div class="row page-titles mx-0">
-        <div class="col p-md-0">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                <li class="breadcrumb-item active"><a href="javascript:void(0)">Home</a></li>
-            </ol>
-        </div>
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">{{ $siswa->exists ? 'Edit Siswa' : 'Tambah Siswa' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <!-- row -->
+    <div class="modal-body">
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">{{ isset($siswa) ? 'Edit' : 'Tambah' }} Siswa</h4>
-                        <div class="basic-form">
-                            <form method="POST"
-                                action="{{ $siswa->exists ? route('siswa.update', $siswa->NIS) : route('siswa.store') }}">
-                                @csrf
-                                @if ($siswa->exists)
-                                    @method('PUT')
-                                @endif
+        {{-- NIS --}}
+        <div class="mb-3">
+            <label for="NIS" class="form-label">NIS</label>
+            <input type="text" name="NIS" id="NIS" class="form-control" value="{{ old('NIS', $siswa->NIS) }}" {{ $siswa->exists ? 'readonly' : '' }}>
+        </div>
 
-                                <div class="mb-3">
-                                    <label>NIS</label>
-                                    <input type="text" name="NIS" value="{{ old('NIS', $siswa->NIS) }}"
-                                        class="form-control" {{ $siswa->exists ? 'readonly' : '' }}>
-                                </div>
-                                <div class="mb-3">
-                                    <label>NIK</label>
-                                    <input type="text" name="NIK" value="{{ old('NIK', $siswa->NIK) }}"
-                                        class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label>NISN</label>
-                                    <input type="text" name="NISN" value="{{ old('NISN', $siswa->NISN) }}"
-                                        class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label>Nama Siswa</label>
-                                    <input type="text" name="nama_siswa"
-                                        value="{{ old('nama_siswa', $siswa->nama_siswa) }}" class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label>Tempat Lahir</label>
-                                    <input type="text" name="tempat_lahir"
-                                        value="{{ old('tempat_lahir', $siswa->tempat_lahir) }}" class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label>Tanggal Lahir</label>
-                                    <input type="date" name="tgl_lahir" value="{{ old('tgl_lahir', $siswa->tgl_lahir) }}"
-                                        class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label>Nama Kelas</label>
-                                    <input type="text" name="nama_kelas" value="{{ old('nama_kelas', $siswa->nama_kelas) }}"
-                                        class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label>Foto</label>
-                                    <input type="text" name="foto" value="{{ old('foto', $siswa->foto) }}"
-                                        class="form-control">
-                                </div>
-                                <button type="submit"
-                                    class="btn btn-success">{{ $siswa->exists ? 'Update' : 'Simpan' }}</button>
-                                <a href="{{ route('siswa.index') }}" class="btn btn-secondary">Kembali</a>
-                            </form>
-                        </div>
-                    </div>
+        {{-- NISN --}}
+        <div class="mb-3">
+            <label for="NISN" class="form-label">NISN</label>
+            <input type="text" name="NISN" id="NISN" class="form-control" value="{{ old('NISN', $siswa->NISN) }}">
+        </div>
+
+        {{-- NIK --}}
+        <div class="mb-3">
+            <label for="NIK" class="form-label">NIK</label>
+            <input type="text" name="NIK" id="NIK" class="form-control" value="{{ old('NIK', $siswa->NIK) }}">
+        </div>
+
+        {{-- Nama Siswa --}}
+        <div class="mb-3">
+            <label for="nama_siswa" class="form-label">Nama Siswa</label>
+            <input type="text" name="nama_siswa" id="nama_siswa" class="form-control" value="{{ old('nama_siswa', $siswa->nama_siswa) }}">
+        </div>
+
+        {{-- Tempat Lahir --}}
+        <div class="mb-3">
+            <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+            <input type="text" name="tempat_lahir" id="tempat_lahir" class="form-control" value="{{ old('tempat_lahir', $siswa->tempat_lahir) }}">
+        </div>
+
+        {{-- Tanggal Lahir --}}
+        <div class="mb-3">
+            <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
+            <input type="date" name="tgl_lahir" id="tgl_lahir" class="form-control" value="{{ old('tgl_lahir', $siswa->tgl_lahir) }}">
+        </div>
+
+        {{-- Foto --}}
+        <div class="mb-3">
+            <label for="foto" class="form-label">Foto</label>
+            <input type="file" name="foto" id="foto" class="form-control">
+            @if ($siswa->foto)
+                <div class="mt-2">
+                    <img src="{{ asset('storage/' . $siswa->foto) }}" alt="Foto" class="img-thumbnail" width="100" height="100" style="object-fit: cover;">
                 </div>
-            </div>
+            @endif
         </div>
+
     </div>
-@endsection
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+</div>

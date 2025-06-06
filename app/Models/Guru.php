@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Guru extends Model
+class Guru extends Authenticatable
 {
 
     // Nama tabel (jika tidak mengikuti konvensi Laravel)
@@ -29,6 +30,9 @@ class Guru extends Model
         'nama_guru',
         'jabatan',
         'tgl_lahir',
+        'foto',
+        'password',
+        'status'
     ];
 
     // Jika ingin casting tgl_lahir ke Carbon

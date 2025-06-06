@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; // ✅ Tambahkan ini
 
 class Orangtua extends Model
 {
@@ -21,6 +22,7 @@ class Orangtua extends Model
         'pekerjaan_ayah',
         'pekerjaan_ibu',
         'alamat',
+        'password',
     ];
 
     public function siswa(): BelongsTo

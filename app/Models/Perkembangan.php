@@ -14,4 +14,9 @@ class Perkembangan extends Model
     public $timestamps = false;
 
     protected $fillable = ['id_perkembangan', 'indikator'];
+
+    public function indikatorTarbiyah()
+    {
+        return $this->hasMany(IndikatorTarbiyah::class, 'id_perkembangan');
+    }
 }

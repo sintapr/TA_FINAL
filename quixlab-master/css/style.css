@@ -14699,4 +14699,83 @@ html[dir="rtl"] [direction="rtl"][data-sidebar-style="compact"]:not([data-layout
     [data-theme-version="dark"] .footer .copyright p {
       color: #fff; }
 
+      
+
+    /* Notifikasi lonceng */
+    .notification-bell {
+        position: relative;
+        font-size: 20px;
+        color: #6c757d;
+        cursor: pointer;
+    }
+
+    .notification-bell .badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        font-size: 10px;
+        background-color: #ff4d6d;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 50%;
+    }
+
+    /* Avatar profil */
+    .user-img {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    }
+
+    .user-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .user-img .activity {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 10px;
+        height: 10px;
+        background-color: #28a745;
+        border: 2px solid #fff;
+        border-radius: 50%;
+    }
+
+    /* Dropdown profil */
+    .dropdown-profile {
+        min-width: 220px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .dropdown-profile .dropdown-content-body {
+        padding: 10px;
+    }
+
+    .dropdown-profile .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .dropdown-profile .dropdown-item i {
+        margin-right: 10px;
+        font-size: 16px;
+    }
+
+    .dropdown-profile .dropdown-item:hover {
+        background-color: #f7f7f7;
+    }
+
+
+
 /*# sourceMappingURL=style.css.map */

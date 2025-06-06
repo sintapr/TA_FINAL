@@ -40,7 +40,24 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'guru' => [
+            'driver' => 'session',
+            'provider' => 'gurus',
+        ],
+
+        'siswa' => [
+            'driver' => 'session',
+            'provider' => 'siswas',
+        ],
+        'orangtua' => [ // ✅ tambahkan ini
+        'driver' => 'session',
+        'provider' => 'orangtuas',
     ],
+    ],
+
+    
+
 
     /*
     |--------------------------------------------------------------------------
@@ -65,11 +82,22 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'gurus' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Guru::class,
+        ],
+
+        'siswas' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Siswa::class,
+        ],
+        'orangtuas' => [ // ✅ tambahkan ini
+        'driver' => 'eloquent',
+        'model' => App\Models\Orangtua::class,
     ],
+    ],
+
+    
 
     /*
     |--------------------------------------------------------------------------

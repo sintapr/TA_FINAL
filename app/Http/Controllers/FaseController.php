@@ -15,6 +15,19 @@ class FaseController extends Controller
 
     public function create()
     {
+            $lastFase = Fase::orderBy('id_fase', 'desc')->first();
+        
+            if ($lastFase) {
+                $lastNumber = (int) substr($lastFase->id_fase, 2); // Ambil angka setelah "F"
+                $newId = 'F' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            } else {
+                $newId = 'F001';
+            }
+        
+            $fase = new Fase();
+            $fase->id_fase = $newId;
+        
+        
         return view('fase.form', ['fase' => new Fase()]);
     }
 
@@ -30,27 +43,27 @@ class FaseController extends Controller
         return redirect()->route('fase.index')->with('success', 'Fase berhasil ditambahkan.');
     }
 
-    public function edit($id)
+    public function edit($id_fase)
     {
-        $fase = Fase::findOrFail($id);
+        $fase = Fase::findOrFail($id_fase);
         return view('fase.form', compact('fase'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id_fase)
     {
         $request->validate([
             'nama_fase' => 'required|string|max:13',
         ]);
 
-        $fase = Fase::findOrFail($id);
+        $fase = Fase::findOrFail($id_fase);
         $fase->update($request->only('nama_fase'));
 
         return redirect()->route('fase.index')->with('success', 'Fase berhasil diperbarui.');
     }
 
-    public function destroy($id)
+    public function destroy($id_fase)
     {
-        $fase = Fase::findOrFail($id);
+        $fase = Fase::findOrFail($id_fase);
         $fase->delete();
 
         return redirect()->route('fase.index')->with('success', 'Fase berhasil dihapus.');

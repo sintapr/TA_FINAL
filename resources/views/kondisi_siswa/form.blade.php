@@ -13,8 +13,8 @@
 
                     <div class="form-group">
                         <label>ID Kondisi</label>
-                        <input type="text" name="id_kondisi" class="form-control" value="{{ old('id_kondisi', $data->id_kondisi ?? '') }}" {{ isset($data) ? 'readonly' : '' }} required>
-                    </div>
+                        <input type="text" name="id_kondisi" class="form-control" value="{{ old('id_kondisi', $data->id_kondisi ?? '') }}" readonly>
+                    </div>                    
 
                     <div class="form-group">
                         <label>NIS</label>
@@ -59,7 +59,7 @@
                         <select name="id_ta" class="form-control" required>
                             <option value="">-- Pilih Tahun Ajaran --</option>
                             @foreach ($tahun as $t)
-                                <option value="{{ $t->id_ta }}" {{ (isset($data) && $data->id_ta == $t->id_ta) ? 'selected' : '' }}>{{ $t->tahun }}</option>
+                                <option value="{{ $t->id_ta }}" {{ (isset($data) && $data->id_ta == $t->id_ta) ? 'selected' : '' }}>{{ $t->tahun_mulai }}</option>
                             @endforeach
                         </select>
                     </div>
