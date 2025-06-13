@@ -20,23 +20,12 @@
 
 <div class="nk-sidebar">
     <div class="nk-nav-scroll">
-        @if ($role === 'kepala_sekolah')
-            <div class="sidebar-user text-center p-3">
-                <img src="{{ $guru->foto ? asset('storage/foto/' . $guru->foto) : asset('images/default.png') }}"
-                     alt="Foto Kepala Sekolah"
-                     class="rounded-circle mb-2"
-                     width="80" height="80"
-                     style="object-fit: cover;">
-                <h6 class="mb-0 text-black">{{ $guru->nama_guru }}</h6>
-                <small class="text-black">{{ $guru->NIP }}</small>
-            </div>
-        @endif
-
-        <ul class="metismenu" id="menu">
+        <ul class="metismenu text-white" id="menu">
             <!-- DASHBOARD -->
             <li class="{{ $routeName === 'dashboard' ? 'active' : '' }}">
                 <a href="{{ route('dashboard') }}" aria-expanded="false">
-                    <i class="icon-speedometer menu-icon"></i><span class="nav-text">Dashboard</span>
+                    <i class="icon-speedometer menu-icon"></i>
+                    <span class="nav-text">Dashboard</span>
                 </a>
             </li>
 
@@ -44,7 +33,8 @@
             @if (in_array($role, ['admin', 'wali_kelas', 'kepala_sekolah', 'guru']))
                 <li class="{{ Str::startsWith($routeName, ['siswa.', 'kelas.', 'orangtua.', 'guru.', 'tahun-ajaran.', 'wali_kelas.', 'anggota_kelas.']) ? 'active' : '' }}">
                     <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
-                        <i class="icon-graduation menu-icon"></i><span class="nav-text">Akademik</span>
+                        <i class="icon-graduation menu-icon"></i>
+                        <span class="nav-text">Akademik</span>
                     </a>
                     <ul aria-expanded="false">
                         <li><a href="{{ route('siswa.index') }}">Data Siswa</a></li>
@@ -60,11 +50,12 @@
                 </li>
             @endif
 
-            {{-- ASSESMENT / PENILAIAN --}}
+            {{-- PENILAIAN --}}
             @if (in_array($role, ['admin', 'kepala_sekolah', 'wali_kelas']))
                 <li class="{{ Str::startsWith($routeName, ['fase.', 'materi_tarbiyah.', 'indikator.', 'surat-hafalan.', 'perkembangan.', 'kondisi-siswa.', 'tujuan.', 'assesment.', 'absensi.', 'monitoring.', 'penilaian_cp.', 'detail_rapor.', 'detail_nilai_hafalan.', 'detail_nilai_tarbiyah.', 'detail_nilai_cp.', 'detail_nilai_p5.']) ? 'active' : '' }}">
                     <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
-                        <i class="icon-pencil menu-icon"></i><span class="nav-text">Penilaian</span>
+                        <i class="icon-pencil menu-icon"></i>
+                        <span class="nav-text">Penilaian</span>
                     </a>
                     <ul aria-expanded="false">
                         @if(in_array($role, ['admin', 'kepala_sekolah']))
@@ -78,7 +69,6 @@
                             <li><a href="{{ route('penilaian_cp.index') }}">Data Capaian</a></li>
                             <li><a href="{{ route('detail_rapor.index') }}">Data Rapor</a></li>
                         @endif
-
                         <li><a href="{{ route('tujuan.index') }}">Data Tujuan Pembelajaran</a></li>
                         <li><a href="{{ route('assesment.index') }}">Data Assesment</a></li>
                         <li><a href="{{ route('absensi.index') }}">Data Absensi</a></li>
@@ -94,17 +84,16 @@
             @if (in_array($role, ['admin', 'wali_kelas', 'kepala_sekolah', 'ortu']))
                 <li class="{{ Str::startsWith($routeName, ['laporan-assesment']) ? 'active' : '' }}">
                     <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
-                        <i class="icon-docs menu-icon"></i><span class="nav-text">Laporan</span>
+                        <i class="icon-docs menu-icon"></i>
+                        <span class="nav-text">Laporan</span>
                     </a>
                     <ul aria-expanded="false">
                         <li><a href="{{ route('laporan-assesment.index') }}">Laporan Mingguan</a></li>
-                        @if($role !== 'ortu')
-                            <li><a href="{{ route('laporan-semester.index') }}">Laporan Semester</a></li>
-                        @endif
+                        <li><a href="{{ route('laporan-semester.index') }}">Laporan Semester</a></li>
                     </ul>
                 </li>
             @endif
-
         </ul>
     </div>
 </div>
+

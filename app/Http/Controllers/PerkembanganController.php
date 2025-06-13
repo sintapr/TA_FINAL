@@ -7,9 +7,19 @@ use Illuminate\Http\Request;
 
 class PerkembanganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $perkembangan = Perkembangan::all();
+        // Ambil keyword pencarian dari input
+        $search = $request->input('search');
+
+        // Query data perkembangan dengan filter jika ada pencarian
+        $perkembangan = Perkembangan::when($search, function ($query, $search) {
+                return $query->where('indikator', 'like', '%' . $search . '%')
+                 ->orWhere('id_perkembangan', 'like', "%$search%");
+            })
+            ->orderBy('id_perkembangan')
+            ->paginate(10);
         return view('perkembangan.index', compact('perkembangan'));
     }
 

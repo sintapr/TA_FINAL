@@ -5,10 +5,12 @@
 @section('content')
 <div class="row page-titles mx-0 align-items-center justify-content-between">
     <div class="col-auto">
-        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambahSiswa">
-            <i class="fa fa-plus"></i> Tambah @yield('title')
-        </button>
+        <!-- Tombol Tambah -->
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambahSiswa">
+        <i class="fa fa-plus"></i> Tambah @yield('title')
+    </button>
     </div>
+
     <div class="col-auto">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
@@ -29,7 +31,10 @@
                         value="{{ request('search') }}">
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-secondary w-100" type="submit"><i class="fa fa-search"></i> Cari</button>
+                    <!-- Tombol Cari -->
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="fa fa-search"></i> Cari
+                    </button>
                 </div>
             </form>
 
@@ -77,7 +82,7 @@
                                 </td>
                                 <td class="text-center">
                                 {{-- Tombol Lihat Detail --}}
-                                <a href="{{ route('siswa.show', $item->NIS) }}" class="btn btn-info btn-sm" title="Lihat Detail">
+                                <a href="{{ route('siswa.show', $item->NIS) }}" class="btn btn-success btn-sm" title="Lihat Detail">
                                     <i class="fa fa-eye"></i>
                                 </a>
 

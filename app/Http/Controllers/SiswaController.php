@@ -63,14 +63,14 @@ class SiswaController extends Controller
         $hashedPassword = Hash::make($passwordPlain);
 
         // Simpan data orangtua
-        Orangtua::create([
-            'id_ortu' => 'OT' . substr($request->NIS, -6),
-            'NIS' => $request->NIS,
-            'nama_ayah' => '-',
-            'nama_ibu' => '-',
-            'password' => $hashedPassword,
-        ]);
-
+           // Generate id_ortu baru
+    $lastOrtu = Orangtua::orderBy('id_ortu', 'desc')->first();
+    if ($lastOrtu) {
+        $lastNumber = (int) substr($lastOrtu->id_ortu, 2);
+        $newIdOrtu = 'OT' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+    } else {
+        $newIdOrtu = 'OT001';
+    }
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil ditambahkan.');
     }
 

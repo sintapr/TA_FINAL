@@ -7,11 +7,21 @@ use Illuminate\Http\Request;
 
 class FaseController extends Controller
 {
-    public function index()
-    {
-        $fase = Fase::all();
-        return view('fase.index', compact('fase'));
+    public function index(Request $request)
+{
+    $query = Fase::query();
+
+    if ($request->filled('search')) {
+        $query->where('id_fase', 'like', '%' . $request->search . '%')
+              ->orWhere('nama_fase', 'like', '%' . $request->search . '%');
     }
+
+    $fase = $query->paginate(10)->appends($request->query());
+
+    return view('fase.index', compact('fase'));
+}
+
+
 
     public function create()
     {

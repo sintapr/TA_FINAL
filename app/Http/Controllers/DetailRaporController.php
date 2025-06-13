@@ -9,11 +9,23 @@ use Illuminate\Http\Request;
 
 class DetailRaporController extends Controller
 {
-    public function index()
-    {
-        $detail_rapor = DetailRapor::with(['rapor', 'perkembangan'])->get();
-        return view('detail_rapor.index', compact('detail_rapor'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $detail_rapor = DetailRapor::with(['rapor', 'perkembangan'])
+        ->when($search, function ($query) use ($search) {
+            $query->whereHas('rapor', function ($q) use ($search) {
+                $q->where('id_rapor', 'like', '%' . $search . '%');
+            })->orWhereHas('perkembangan', function ($q) use ($search) {
+                $q->where('indikator', 'like', '%' . $search . '%');
+            });
+        })
+        ->orderBy('no_detail_rapor', 'asc')
+        ->paginate(10);
+
+    return view('detail_rapor.index', compact('detail_rapor'));
+}
 
     public function create()
 {

@@ -39,4 +39,14 @@ class Guru extends Authenticatable
     protected $casts = [
         'tgl_lahir' => 'date',
     ];
+
+    // App\Models\Guru.php
+
+public function waliKelas()
+{
+    return $this->hasOne(WaliKelas::class, 'NIP', 'NIP');
+}
+
+
+
 }

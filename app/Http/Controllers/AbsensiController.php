@@ -10,11 +10,23 @@ use App\Models\TahunAjaran;
 
 class AbsensiController extends Controller
 {
-    public function index()
-    {
-        $absensi = Absensi::with(['siswa', 'kelas', 'tahunAjaran'])->get();
-        return view('absensi.index', compact('absensi'));
+    public function index(Request $request)
+{
+    $query = Absensi::with(['siswa', 'kelas', 'tahunAjaran'])->latest('tanggal');
+
+    if ($request->has('search')) {
+        $search = $request->search;
+        $query->whereHas('siswa', function ($q) use ($search) {
+            $q->where('nama_siswa', 'like', '%' . $search . '%')
+              ->orWhere('NIS', 'like', '%' . $search . '%');
+        });
     }
+
+    $absensi = $query->get();
+
+    return view('absensi.index', compact('absensi'));
+}
+
 
     public function create()
 {

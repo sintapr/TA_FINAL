@@ -8,12 +8,22 @@ use Illuminate\Http\Request;
 
 class PenilaianCpController extends Controller
 {
-    public function index()
-    {
-        $penilaian = PenilaianCp::all();
-        return view('penilaian_cp.index', compact('penilaian'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
 
+    $penilaian = PenilaianCp::with('perkembangan')
+        ->when($search, function ($query, $search) {
+            $query->where('aspek_nilai', 'like', '%' . $search . '%')
+                  ->orWhereHas('perkembangan', function ($q) use ($search) {
+                      $q->where('indikator', 'like', '%' . $search . '%');
+                  });
+        })
+        ->orderBy('id_penilaian_cp')
+        ->paginate(10);
+
+    return view('penilaian_cp.index', compact('penilaian'));
+}
         public function create()
     {
         $lastId = PenilaianCp::max('id_penilaian_cp');

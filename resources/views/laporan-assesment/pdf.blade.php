@@ -142,6 +142,7 @@
                 <th>Tempat dan Waktu Muncul</th>
                 <th>Kejadian Teramati</th>
                 <th>Minggu</th>
+                <th>Bulan</th>
                 <th>Semester</th>
             </tr>
         </thead>
@@ -154,6 +155,7 @@
                     <td>{{ $item->tempat_waktu }}</td>
                     <td>{{ $item->kejadian_teramati }}</td>
                     <td>{{ $item->minggu }}</td>
+                    <td>{{ $item->bulan }}</td>
                     <td>{{ $item->semester }}</td>
                 </tr>
             @empty

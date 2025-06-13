@@ -9,11 +9,22 @@ use Illuminate\Http\Request;
 
 class DetailNilaiHafalanController extends Controller
 {
-    public function index()
-    {
-        $data = DetailNilaiHafalan::with(['rapor', 'surat'])->get();
-        return view('detail_nilai_hafalan.index', compact('data'));
+    public function index(Request $request)
+{
+    $query = DetailNilaiHafalan::with(['rapor', 'surat']);
+
+    if ($request->has('search') && $request->search != '') {
+        $search = $request->search;
+        $query->whereHas('surat', function ($q) use ($search) {
+            $q->where('nama_surat', 'like', '%' . $search . '%');
+        })->orWhere('id_rapor', 'like', '%' . $search . '%');
     }
+
+    $data = $query->orderBy('id_detail_nilai_hafalan')->paginate(10);
+
+    return view('detail_nilai_hafalan.index', compact('data'));
+}
+
 
         public function create()
     {

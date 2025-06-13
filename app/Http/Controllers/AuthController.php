@@ -46,11 +46,12 @@ class AuthController extends Controller
         }
 
         // 🔥 Login sebagai Orangtua
-        $ortu = Orangtua::where('NIS', $credentials['identifier'])->first();
-        if ($ortu && Hash::check($credentials['password'], $ortu->password)) {
-            Auth::guard('orangtua')->login($ortu);
-            session(['role' => 'orangtua']);
-            return redirect()->intended('/dashboard');
+        // Login sebagai Orangtua
+    $ortu = Orangtua::where('NIS', $credentials['identifier'])->first();
+    if ($ortu && Hash::check($credentials['password'], $ortu->password)) {
+        Auth::guard('orangtua')->login($ortu);
+        session(['role' => 'orangtua']);
+        return redirect()->intended('/dashboard');
     }
 
         return back()->withErrors(['identifier' => 'NIS/NIP atau password salah.'])->withInput();

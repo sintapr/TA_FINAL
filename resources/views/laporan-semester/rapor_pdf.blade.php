@@ -11,6 +11,13 @@
             margin: 30px;
             color: #000;
         }
+        .arabic {
+        direction: rtl;
+        text-align: right;
+        font-family: 'Amiri', 'Traditional Arabic', 'Scheherazade', 'DejaVu Sans', sans-serif;
+        font-size: 14px;
+        line-height: 2;
+    }
         .center { text-align: center; }
         .header img { margin-bottom: 5px; }
         .header h3, .header h4, .header p { margin: 3px 0; }
@@ -107,9 +114,10 @@
 </div>
 
 <h4 class="section-title">Muqoddimah</h4>
-<div style="text-align: justify; line-height: 1.8;">
-    {!! nl2br(e(strip_tags($muqoddimah))) !!}
+<div class="arabic">
+    {!! $muqoddimah !!}
 </div>
+
 
 <h4 class="section-title">Hafalan Surat Pendek</h4>
 <table>
@@ -121,7 +129,7 @@
         <tr>
             <td>{{ $i + 1 }}</td>
             <td>{{ $h->surat->nama_surat ?? '-' }}</td>
-            <td>{{ $h->nilai }}</td>
+            <td>{!! $h->nilai ?? '-' !!}</td>
         </tr>
         @endforeach
     </tbody>
@@ -137,9 +145,9 @@
             @foreach($list as $i => $item)
             <tr>
                 <td>{{ $i+1 }}</td>
-                <td>{{ $item->materi && $item->materi->indikatorTarbiyah ? $item->materi->indikatorTarbiyah->indikator : 'Lainnya' }}</td>
+                <td>{{ $item->materi && $item->materi->indikator ? $item->materi->indikator->indikator : 'Lainnya' }}</td>
                 <td>{{ $item->materi->materi }}</td>
-                <td>{{ $item->nilai }}</td>
+                <td>{!! $item->nilai ?? '-' !!}</td>
             </tr>
             @endforeach
         </tbody>
@@ -156,7 +164,7 @@
             @foreach($listCp as $c)
             <tr>
                 <td>{{ $c->penilaian->aspek_nilai }}</td>
-                <td>{!! $c->nilai !!}</td>
+                <td>{!! $c->nilai ?? '-' !!}</td>
                 <td>
                     @if($c->foto)
                         <img src="{{ public_path('storage/' . $c->foto) }}" class="foto-cp">

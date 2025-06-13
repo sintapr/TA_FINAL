@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\WaliKelas;
@@ -9,6 +10,7 @@ use App\Models\TahunAjaran;
 use App\Models\MonitoringSemester;
 use App\Models\Absensi;
 use App\Models\KondisiSiswa;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,35 +18,80 @@ use Illuminate\Support\Str;
 class LaporanSemesterController extends Controller
 {
     // Menampilkan daftar kelas dengan jumlah siswa per tahun ajaran yang dipilih atau aktif
-            public function index(Request $request)
-    {
-        $search = $request->input('search');
+public function index(Request $request)
+{
+    $search = $request->input('search');
 
-        // Kalau mau semua tahun ajaran (aktif & tidak aktif), ambil list semua tahun ajaran sesuai filter
-        $tahunAjarans = TahunAjaran::when($search, function ($query, $search) {
-                return $query->where('semester', 'like', "%$search%")
-                            ->orWhere('tahun_mulai', 'like', "%$search%");
-            })
-            ->orderBy('tahun_mulai')
-            ->orderBy('semester')
-            ->get();
+    $tahunAjarans = TahunAjaran::when($search, function ($query, $search) {
+            return $query->where('semester', 'like', "%$search%")
+                        ->orWhere('tahun_mulai', 'like', "%$search%");
+        })
+        ->orderBy('tahun_mulai')
+        ->orderBy('semester')
+        ->get();
 
-        // Ambil kelas dengan jumlah siswa yang punya wali kelas di salah satu tahun ajaran yang ditemukan
-        $kelasList = Kelas::whereHas('waliKelas', function ($query) use ($tahunAjarans) {
-                $query->whereIn('id_ta', $tahunAjarans->pluck('id_ta'));
-            })
-            ->withCount(['anggota_kelas as jumlah_siswa' => function ($query) use ($tahunAjarans) {
-                $query->whereHas('waliKelas', function ($q) use ($tahunAjarans) {
-                    $q->whereIn('id_ta', $tahunAjarans->pluck('id_ta'));
-                });
-            }])
-            ->orderBy('nama_kelas')
-            ->get();
-
-        return view('laporan-semester.index', compact('kelasList', 'tahunAjarans'));
+    // Deteksi user dan role berdasarkan guard
+    if (Auth::guard('siswa')->check()) {
+        $user = Auth::guard('siswa')->user();
+        $role = 'orangtua';
+    } elseif (Auth::guard('guru')->check()) {
+        $user = Auth::guard('guru')->user();
+        $role = $user->jabatan ?? 'guest';
+    } else {
+        return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
     }
 
+    // ======== Jika ORANGTUA, langsung tampilkan daftar rapor anak ========
+    if ($role === 'orangtua') {
+        $raporSemester = MonitoringSemester::where('NIS', $user->NIS)
+            ->with(['tahunAjaran', 'kelas'])
+            ->get();
 
+        $siswa = \App\Models\Siswa::where('NIS', $user->NIS)->first();
+
+        return view('laporan-semester.ortu', compact('raporSemester', 'siswa'));
+    }
+
+    // ======== Jika GURU / ADMIN / WALI_KELAS ========
+    $kelasList = [];
+
+    if ($role === 'wali_kelas') {
+        $waliKelasList = WaliKelas::where('NIP', $user->NIP)
+                            ->whereIn('id_ta', $tahunAjarans->pluck('id_ta'))
+                            ->with('kelas')
+                            ->get();
+
+    } elseif (in_array($role, ['admin', 'kepala_sekolah'])) {
+        $waliKelasList = WaliKelas::whereIn('id_ta', $tahunAjarans->pluck('id_ta'))
+                            ->with('kelas')
+                            ->get();
+
+    } else {
+        return abort(403, 'Akses ditolak.');
+    }
+
+    foreach ($waliKelasList as $wali) {
+        if ($wali && $wali->kelas) {
+            $jumlah = $wali->anggotaKelas()->count(); // relasi anggotaKelas harus ada
+            $kelasList[] = [
+                'kelas' => $wali->kelas,
+                'jumlah_siswa' => $jumlah,
+                'semester' => $wali->tahunAjaran->semester ?? '-',
+                'tahun_ajaran' => $wali->tahunAjaran->tahun_mulai ?? '-',
+                'status' => $wali->tahunAjaran->status ?? 0,
+                'id_wakel' => $wali->id_wakel,
+                'id_ta' => $wali->id_ta,
+            ];
+        }
+    }
+
+    $kelasList = collect($kelasList)->sortBy([
+        ['tahun_ajaran', 'asc'],
+        ['semester', 'asc'],
+    ])->values()->all();
+
+    return view('laporan-semester.index', compact('kelasList', 'tahunAjarans'));
+}
 
 
     // Menampilkan detail wali kelas dan daftar siswa di kelas tersebut untuk tahun ajaran aktif
@@ -140,6 +187,25 @@ class LaporanSemesterController extends Controller
     ));
 }
 
+public function ortu()
+{
+    $ortu = Auth::guard('orangtua')->user(); // pakai guard 'orangtua'
+    $nis = $ortu->NIS; // ambil NIS dari kolom di tabel orangtua
+
+    $siswa = Siswa::where('NIS', $nis)->firstOrFail();
+
+    $raporSemester = MonitoringSemester::with(['tahunAjaran', 'kelas'])
+        ->where('NIS', $nis)
+        ->orderByDesc('id_ta')
+        ->get();
+
+    return view('laporan-semester.ortu', compact('siswa', 'raporSemester'));
+}
+
+
+
+
+
 
 
         public function rapor($id_kelas, $id_ta)
@@ -232,6 +298,38 @@ public function edit($nis, $id_ta)
 
 
     return $pdf->stream($filename);
+}
+
+public function notify(Request $request, $nis, $id_ta, $id_kelas)
+{
+
+        $user = Auth::user();
+
+    if (!in_array($user->jabatan, ['admin', 'wali_kelas'])) {
+        abort(403, 'Anda tidak memiliki izin untuk mengirim notifikasi.');
+    }
+
+    $request->validate([
+        'pesan' => 'required|string',
+    ]);
+
+    // Validasi apakah NIS benar-benar ada
+    if (!DB::table('siswa')->where('NIS', $nis)->exists()) {
+        return back()->with('error', 'Siswa tidak ditemukan.');
+    }
+
+    DB::table('notifikasi')->insert([
+        'judul' => 'Notifikasi Rapor Semester',
+        'pesan' => $request->pesan,
+        'untuk_role' => 'orangtua',
+        'NIS' => $nis,
+        'dibaca' => 0,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    return redirect()->route('laporan-semester.rapor', ['id_kelas' => $id_kelas, 'id_ta' => $id_ta])
+        ->with('success', 'Notifikasi berhasil dikirim ke orangtua.');
 }
 
 

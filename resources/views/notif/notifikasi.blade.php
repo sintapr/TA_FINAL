@@ -61,3 +61,27 @@
         @endif
     </ul>
 </li>
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.mark-as-read').forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                let notifId = this.dataset.id;
+
+                fetch(`/notifikasi/${notifId}/read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(() => {
+                    location.reload();
+                });
+            });
+        });
+    });
+</script>
+@endsection
+

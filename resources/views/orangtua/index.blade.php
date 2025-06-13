@@ -26,6 +26,19 @@
                     <h4 class="card-title"> @yield('title')</h4>
                     <div class="table-responsive">
 
+            {{-- Form pencarian --}}
+            <form method="GET" class="row mb-3">
+                <div class="col-md-6">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama orangtua..."
+                        value="{{ request('search') }}">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="fa fa-search"></i> Cari
+                    </button>
+                </div>
+            </form>
+
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -33,6 +46,8 @@
                             <th>NIS</th>
                             <th>Ayah</th>
                             <th>Ibu</th>
+                            <th>Pekerjaan Ayah</th>
+                            <th>Pekerjaan Ibu</th>
                             <th>Alamat</th>
                             <th>Aksi</th>
                         </tr>
@@ -44,6 +59,8 @@
                                 <td>{{ $item->NIS }}</td>
                                 <td>{{ $item->nama_ayah }}</td>
                                 <td>{{ $item->nama_ibu }}</td>
+                                <td>{{ $item->pekerjaan_ayah }}</td>
+                                <td>{{ $item->pekerjaan_ibu }}</td>
                                 <td>{{ $item->alamat }}</td>
                                 <td>
                                     <a href="{{ route('orangtua.edit', $item->id_ortu) }}" class="btn btn-warning btn-sm" title="Edit">
@@ -64,7 +81,21 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
+                        {{-- Keterangan jumlah --}}
+                        <p class="mt-2">
+                            Menampilkan {{ $orangtua->count() }} dari {{ $orangtua->total() }} Data Orangtua
+                        </p>
+
+                        {{-- Pagination --}}
+                        <div class="d-flex justify-content-center">
+                            {{ $orangtua->appends(request()->query())->links('pagination::bootstrap-4') }}
+                        </div>
+
+                    </div> {{-- .table-responsive --}}
+                </div> {{-- .card-body --}}
+            </div> {{-- .card --}}
+        </div> {{-- .col-12 --}}
+    </div> {{-- .row --}}
+</div> {{-- .container-fluid --}}
 @endsection
+

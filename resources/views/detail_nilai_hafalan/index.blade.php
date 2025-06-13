@@ -1,10 +1,12 @@
-@extends('layouts.app')
+@extends('layouts.app') 
 @section('title', 'Detail Nilai Hafalan')
 @section('content')
 
 <div class="row page-titles mx-0 justify-content-between align-items-center">
     <div class="col-auto">
-        <a href="{{ route('detail_nilai_hafalan.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Tambah Nilai Hafalan</a>
+        <a href="{{ route('detail_nilai_hafalan.create') }}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Tambah Nilai Hafalan
+        </a>
     </div>
     <div class="col-auto">
         <ol class="breadcrumb mb-0">
@@ -18,6 +20,19 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">@yield('title')</h4>
+
+            {{-- Form Pencarian --}}
+            <form method="GET" class="row mb-3">
+                <div class="col-md-6">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama surat atau ID rapor..." value="{{ request('search') }}">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="fa fa-search"></i> Cari
+                    </button>
+                </div>
+            </form>
+
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
@@ -50,6 +65,17 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- Keterangan jumlah --}}
+            <p class="mt-2">
+                Menampilkan {{ $data->count() }} dari {{ $data->total() }} Data Nilai Hafalan
+            </p>
+
+            {{-- Pagination --}}
+            <div class="d-flex justify-content-center">
+                {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
+            </div>
+
         </div>
     </div>
 </div>

@@ -9,9 +9,18 @@ use Illuminate\Support\Facades\Hash;
 
 class OrangtuaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orangtua = Orangtua::all();
+        $search = $request->input('search');
+
+        $query = Orangtua::query();
+
+        if ($search) {
+            $query->where('NIS', 'like', "%{$search}%")
+                  ->orWhere('nama_ayah', 'like', "%{$search}%");
+        }
+
+        $orangtua = $query->paginate(10);
         return view('orangtua.index', compact('orangtua'));
     }
 
@@ -34,48 +43,49 @@ class OrangtuaController extends Controller
 
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'id_ortu' => 'required|unique:orangtua,id_ortu|max:8',
-            'NIS' => 'required|max:8',
-            'nama_ayah' => 'required|max:155',
-            'nama_ibu' => 'required|max:155',
-            'pekerjaan_ayah' => 'nullable|max:50',
-            'pekerjaan_ibu' => 'nullable|max:50',
-            'alamat' => 'nullable|max:255',
-        ]);
+{
+    $request->validate([
+        'id_ortu' => 'required|unique:orangtua,id_ortu|max:8',
+        'NIS' => 'required|max:8',
+        'nama_ayah' => 'required|max:155',
+        'nama_ibu' => 'required|max:155',
+        'pekerjaan_ayah' => 'nullable|max:50',
+        'pekerjaan_ibu' => 'nullable|max:50',
+        'alamat' => 'nullable|max:255',
+    ]);
 
-// Buat password dari tanggal lahir
-// $passwordOrtu = \Carbon\Carbon::parse($request->tgl_lahir)->format('dmY');
-// $hashedPasswordOrtu = Hash::make($passwordOrtu);
+    // Ambil siswa berdasarkan NIS
+    $siswa = \App\Models\Siswa::where('NIS', $request->NIS)->first();
 
-// Generate ID Ortu baru
-$lastOrtu = Orangtua::orderBy('id_ortu', 'desc')->first();
-if ($lastOrtu) {
-    $lastNumber = (int) substr($lastOrtu->id_ortu, 2); // Ambil angka setelah "OT"
-    $newIdOrtu = 'OT' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-} else {
-    $newIdOrtu = 'OT001';
+    if (!$siswa) {
+        return back()->withErrors(['NIS' => 'Siswa dengan NIS tersebut tidak ditemukan.'])->withInput();
+    }
+
+    // Password dari tanggal lahir siswa
+    $passwordOrtu = \Carbon\Carbon::parse($siswa->tgl_lahir)->format('dmY');
+    $hashedPasswordOrtu = \Illuminate\Support\Facades\Hash::make($passwordOrtu);
+
+    // Generate ID Ortu baru
+    $lastOrtu = \App\Models\Orangtua::orderBy('id_ortu', 'desc')->first();
+    $newIdOrtu = $lastOrtu
+        ? 'OT' . str_pad((int) substr($lastOrtu->id_ortu, 2) + 1, 3, '0', STR_PAD_LEFT)
+        : 'OT001';
+
+    // Simpan data
+    \App\Models\Orangtua::create([
+        'id_ortu' => $newIdOrtu,
+        'NIS' => $request->NIS,
+        'nama_ayah' => $request->nama_ayah ?? '-',
+        'nama_ibu' => $request->nama_ibu ?? '-',
+        'pekerjaan_ayah' => $request->pekerjaan_ayah,
+        'pekerjaan_ibu' => $request->pekerjaan_ibu,
+        'alamat' => $request->alamat,
+        'password' => $hashedPasswordOrtu,
+    ]);
+
+    return redirect()->route('orangtua.index')->with('success', 'Data orang tua berhasil ditambahkan.');
 }
 
-// Simpan data orangtua
- $passwordOrtu = Carbon::parse($request->tgl_lahir)->format('dmY');
- $hashedPasswordOrtu = Hash::make($passwordOrtu);
-
-// Simpan password yang sudah di-hash, jangan simpan yang plaintext
-Orangtua::create([
-    'id_ortu' => $newIdOrtu,
-    'NIS' => $request->NIS,
-    'nama_ayah' => $request->nama_ayah ?? '-',
-    'nama_ibu' => $request->nama_ibu ?? '-',
-    'pekerjaan_ayah' => $request->pekerjaan_ayah,
-    'pekerjaan_ibu' => $request->pekerjaan_ibu,
-    'alamat' => $request->alamat,
-    'password' => $hashedPasswordOrtu,
-]);
-
-        return redirect()->route('orangtua.index')->with('success', 'Data orang tua berhasil ditambahkan.');
-    }
 
     public function edit($id)
     {

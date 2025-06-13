@@ -7,11 +7,23 @@ use Illuminate\Http\Request;
 
 class KelasController extends Controller
 {
-    public function index()
-    {
-        $kelas = Kelas::all();
-        return view('kelas.index', compact('kelas'));
-    }
+    public function index(Request $request)
+{
+
+    $search = $request->input('search');
+
+    $query = Kelas::query();
+
+   if ($search) {
+            $query->where('id_kelas', 'like', "%{$search}%")
+                  ->orWhere('nama_kelas', 'like', "%{$search}%");
+   }
+
+    $kelas = $query->paginate(10);
+
+    return view('kelas.index', compact('kelas'));
+}
+
 
     public function create()
     {

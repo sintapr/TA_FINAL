@@ -18,12 +18,25 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">@yield('title')</h4>
+
+            {{-- Form Pencarian --}}
+            <form method="GET" class="row mb-3">
+                <div class="col-md-6">
+                    <input type="text" name="search" class="form-control" placeholder="Cari ID Rapor atau Aspek Penilaian..." value="{{ request('search') }}">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="fa fa-search"></i> Cari
+                    </button>
+                </div>
+            </form>
+
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Id Rapor</th>
+                            <th>ID Rapor</th>
                             <th>Aspek Penilaian</th>
                             <th>Nilai</th>
                             <th>Foto</th>
@@ -58,6 +71,15 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- Keterangan jumlah --}}
+            <p class="mt-2">Menampilkan {{ $data->count() }} dari total {{ $data->total() }} data</p>
+
+            {{-- Pagination --}}
+            <div class="d-flex justify-content-center">
+                {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
+            </div>
+
         </div>
     </div>
 </div>

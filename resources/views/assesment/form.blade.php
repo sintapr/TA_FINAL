@@ -77,9 +77,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Semester</label>
-                    <input type="text" name="semester" class="form-control" value="{{ old('semester', $assesment->semester ?? '') }}">
+                <label>Semester</label>
+                <select name="semester" class="form-control">
+                    <option value="">-- Pilih Semester --</option>
+                    <option value="1" {{ old('semester', $assesment->semester ?? '') == '1' ? 'selected' : '' }}>1</option>
+                    <option value="2" {{ old('semester', $assesment->semester ?? '') == '2' ? 'selected' : '' }}>2</option>
+                </select>
                 </div>
+
 
                 <button class="btn btn-success mt-3">Simpan</button>
                 <a href="{{ route('assesment.index') }}" class="btn btn-secondary mt-3">Kembali</a>

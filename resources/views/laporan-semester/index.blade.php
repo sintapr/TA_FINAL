@@ -51,48 +51,39 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($kelasList as $kelas)
-                            @forelse($kelas->waliKelas as $wali)
-                                @php
-                                    $ta = $wali->tahunAjaran;
-                                    $jumlahSiswa = $wali->anggotaKelas->count();
-                                @endphp
-                                <tr>
-                                    <td>{{ $jumlahSiswa }}</td>
-                                    <td>{{ $ta->semester ?? '-' }}</td>
-                                    <td>
-                                        @if($ta?->tahun_mulai)
-                                            {{ $ta->tahun_mulai }}/{{ $ta->tahun_mulai + 1 }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <span class="badge {{ $ta->status ? 'bg-success' : 'bg-secondary' }} text-white">
-                                            {{ $ta->status ? 'Aktif' : 'Tidak Aktif' }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('laporan-semester.detail', ['id_kelas' => $kelas->id_kelas, 'id_ta' => $ta->id_ta]) }}" class="btn btn-sm btn-info">
-                                            <i class="fa fa-eye"></i> Detail
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                
-                            @endforelse
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center">Tidak ada data kelas.</td>
-                            </tr>
-                        @endforelse
+@foreach ($kelasList as $item)
+<tr>
+    <td>{{ $item['jumlah_siswa'] }}</td>
+    <td>{{ $item['semester'] }}</td>
+    <td>
+        @if($item['tahun_ajaran'])
+            {{ $item['tahun_ajaran'] }}/{{ $item['tahun_ajaran'] + 1 }}
+        @else
+            -
+        @endif
+    </td>
+    <td>
+        <span class="badge {{ $item['status'] ? 'bg-success' : 'bg-secondary' }} text-white">
+            {{ $item['status'] ? 'Aktif' : 'Tidak Aktif' }}
+        </span>
+    </td>
+    <td>
+        <a href="{{ route('laporan-semester.detail', ['id_kelas' => $item['kelas']->id_kelas, 'id_ta' => $item['id_ta']]) }}" class="btn btn-sm btn-info">
+            <i class="fa fa-eye"></i> Detail
+        </a>
+    </td>
+</tr>
+@endforeach
+
+
                     </tbody>
                 </table>
             </div>
 
-            <p class="mt-2">
-                Menampilkan {{ $kelasList->count() }} data
-            </p>
+           <p class="mt-2">
+    Menampilkan {{ count($kelasList) }} data
+</p>
+
         </div>
     </div>
 </div>

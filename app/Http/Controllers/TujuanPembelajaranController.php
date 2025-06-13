@@ -7,9 +7,18 @@ use App\Models\TujuanPembelajaran;
 
 class TujuanPembelajaranController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $tujuan = TujuanPembelajaran::all();
+        $search = $request->input('search');
+
+        $tujuan = TujuanPembelajaran::when($search, function ($query) use ($search) {
+            $query->where('tujuan_pembelajaran', 'like', '%' . $search . '%')
+                            ->orWhere('id_tp', 'like', "%{$search}%");
+
+        })
+        ->orderBy('id_tp', 'asc')
+        ->paginate(10);
 
         // Generate ID baru
         $last = TujuanPembelajaran::orderByDesc('id_tp')->first();

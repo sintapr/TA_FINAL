@@ -2,36 +2,55 @@
 @section('title', 'Manajemen Anggota Kelas')
 
 @section('content')
-    <div class="row page-titles mx-0 align-items-center justify-content-between mb-3">
-        <div class="col-auto">
-            <h4 class="mb-0">@yield('title')</h4>
-        </div>
-        <div class="col-auto">
-            <a href="{{ route('anggota_kelas.create') }}" class="btn btn-primary">
-                <i class="fa fa-plus"></i> Input Siswa ke Kelas
-            </a>
-        </div>
+<div class="row page-titles mx-0 align-items-center justify-content-between">
+    <div class="col-auto">
+        <a href="{{ route('anggota_kelas.create') }}" class="btn btn-primary mb-3">
+            <i class="fa fa-plus"></i> Input Siswa ke Kelas
+        </a>
     </div>
+    <div class="col-auto">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active"><a href="{{ route('anggota_kelas.index') }}">@yield('title')</a></li>
+        </ol>
+    </div>
+</div>
 
-    <form method="GET" action="{{ route('anggota_kelas.index') }}" class="card p-3 mb-4 shadow-sm">
-        <div class="row g-3 align-items-end">
-            <div class="col-md-4">
-                <label for="id_ta" class="form-label">Filter Tahun Ajaran</label>
-                <select name="id_ta" id="id_ta" class="form-select" onchange="this.form.submit()">
-                    @foreach ($tahunAjaranList as $ta)
-                        <option value="{{ $ta->id_ta }}" {{ $id_ta == $ta->id_ta ? 'selected' : '' }}>
-                            {{ $ta->tahun_mulai }} - Semester {{ ucfirst($ta->semester) }} {{ $ta->status ? '(Aktif)' : '' }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-    </form>
-
+<div class="container-fluid">
     <div class="card shadow-sm">
         <div class="card-body">
+            <h4 class="card-title mb-4">@yield('title')</h4>
+
+            <form method="GET" action="{{ route('anggota_kelas.index') }}" class="mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="id_ta" class="form-label">Filter Tahun Ajaran</label>
+                        <select name="id_ta" id="id_ta" class="form-control" onchange="this.form.submit()">
+                            @foreach ($tahunAjaranList as $ta)
+                                <option value="{{ $ta->id_ta }}" {{ $id_ta == $ta->id_ta ? 'selected' : '' }}>
+                                    {{ $ta->tahun_mulai }} - Semester {{ ucfirst($ta->semester) }}
+                                    {{ $ta->status ? '(Aktif)' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="search" class="form-label">Cari Nama Siswa</label>
+                        <input type="text" name="search" id="search" class="form-control" placeholder="Nama siswa..."
+                            value="{{ request('search') }}">
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fa fa-search"></i> Cari
+                        </button>
+                    </div>
+                </div>
+            </form>
+
             <div class="table-responsive">
-                <table class="table table-bordered table-hover table-striped align-middle">
+                <table class="table table-bordered table-striped table-hover align-middle">
                     <thead class="table-light">
                         <tr>
                             <th>NIS</th>
@@ -54,11 +73,12 @@
                                 <td>{{ $item->waliKelas->guru->nama_guru ?? '-' }}</td>
                                 <td class="text-center">
                                     <form method="POST" action="{{ route('anggota_kelas.destroy', $item->id_anggota) }}"
-                                          onsubmit="return confirm('Yakin ingin menghapus siswa dari kelas ini?')">
+                                        onsubmit="return confirm('Yakin ingin menghapus siswa dari kelas ini?')"
+                                        style="display: inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
-                                            <i class="fa fa-trash"></i> Hapus
+                                            <i class="fa fa-trash"></i>
                                         </button>
                                     </form>
                                 </td>
@@ -71,6 +91,15 @@
                     </tbody>
                 </table>
             </div>
+
+            <p class="mt-3 text-muted">
+                Menampilkan {{ $anggotaKelas->count() }} dari {{ $anggotaKelas->total() }} data anggota kelas.
+            </p>
+
+            <div class="d-flex justify-content-center">
+                {{ $anggotaKelas->appends(request()->query())->links('pagination::bootstrap-4') }}
+            </div>
         </div>
     </div>
+</div>
 @endsection

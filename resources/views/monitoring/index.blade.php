@@ -32,8 +32,10 @@
                             value="{{ request('search') }}">
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i> Cari</button>
-                    </div>
+                            <button class="btn btn-primary w-100" type="submit">
+                            <i class="fa fa-search"></i> Cari
+                    </button>                                        
+                </div>
                 </form>
 
                 <div class="table-responsive">

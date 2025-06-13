@@ -22,6 +22,20 @@ class AnggotaKelasController extends Controller
             })
             ->get();
 
+            $query = AnggotaKelas::with(['siswa', 'waliKelas.guru', 'waliKelas.tahunAjaran'])
+            ->whereHas('waliKelas', function ($q) use ($id_ta) {
+                $q->where('id_ta', $id_ta);
+            });
+
+            if ($search = $request->input('search')) {
+            $query->whereHas('siswa', function ($q) use ($search) {
+                $q->where('NIS', 'like', '%' . $search . '%');
+            });
+        }
+
+        $anggotaKelas = $query->paginate(10);
+
+
         return view('anggota_kelas.index', compact('anggotaKelas', 'tahunAjaranList', 'id_ta'));
     }
 

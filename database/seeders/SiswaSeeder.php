@@ -20,7 +20,7 @@ class SiswaSeeder extends Seeder
                 'tgl_lahir' => '2010-05-12',
                 'nama_kelas' => '7A',
                 'foto' => null,
-                'PASSWORD' => Hash::make('orangtua123'),
+                'password' => Hash::make(date('dmY', strtotime('2010-05-12'))),
             ],
         ]);
     }

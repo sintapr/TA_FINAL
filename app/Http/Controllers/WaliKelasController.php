@@ -11,18 +11,27 @@ use Illuminate\Http\Request;
 class WaliKelasController extends Controller
 {
     public function index(Request $request)
-    {
-        $tahunAjaranAktif = TahunAjaran::where('status', 1)->first();
-        $tahunAjaranList = TahunAjaran::all();
+{
+    $tahunAjaranAktif = TahunAjaran::where('status', 1)->first();
+    $tahunAjaranList = TahunAjaran::all();
 
-        $id_ta = $request->input('id_ta', $tahunAjaranAktif->id_ta ?? null);
+    $id_ta = $request->input('id_ta', $tahunAjaranAktif->id_ta ?? null);
+    $search = $request->search;
 
-        $waliKelas = WaliKelas::with(['guru', 'tahunAjaran'])
-            ->where('id_ta', $id_ta)
-            ->get();
+    $query = WaliKelas::with(['guru', 'kelas', 'tahunAjaran'])
+        ->where('id_ta', $id_ta);
 
-        return view('wali_kelas.index', compact('waliKelas', 'tahunAjaranList', 'id_ta'));
+    if ($search) {
+        $query->whereHas('guru', function ($q) use ($search) {
+            $q->where('nama_guru', 'like', '%' . $search . '%');
+        });
     }
+
+    $waliKelas = $query->paginate(10); // Ini saja, tidak ditimpa lagi
+
+    return view('wali_kelas.index', compact('waliKelas', 'tahunAjaranList', 'id_ta'));
+}
+
 
 
     public function create()

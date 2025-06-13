@@ -10,11 +10,24 @@ use Illuminate\Support\Facades\Storage;
 
 class DetailNilaiCpController extends Controller
 {
-    public function index()
-    {
-        $data = DetailNilaiCp::with(['rapor', 'penilaian'])->get();
-        return view('detail_nilai_cp.index', compact('data'));
+    public function index(Request $request)
+{
+    $query = DetailNilaiCP::with(['rapor', 'penilaian']);
+
+    if ($request->has('search') && $request->search != '') {
+        $search = $request->search;
+
+        $query->whereHas('rapor', function ($q) use ($search) {
+            $q->where('id_rapor', 'like', "%$search%");
+        })->orWhereHas('penilaian', function ($q) use ($search) {
+            $q->where('aspek_nilai', 'like', "%$search%");
+        });
     }
+
+    $data = $query->orderBy('id_detail_nilai_cp')->paginate(10);
+    return view('detail_nilai_cp.index', compact('data'));
+}
+
 
     public function create()
     {

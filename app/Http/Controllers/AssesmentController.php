@@ -9,13 +9,23 @@ use Illuminate\Http\Request;
 
 class AssesmentController extends Controller
 {
-    public function index()
-    {
-        
-        $assesment = Assesment::with('siswa', 'tujuan_pembelajaran')->get();
-        return view('assesment.index', compact('assesment'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
 
+    $assesment = Assesment::with(['siswa', 'tujuan_pembelajaran'])
+        ->when($search, function ($query) use ($search) {
+            $query->whereHas('siswa', function ($q) use ($search) {
+                $q->where('nama_siswa', 'like', '%' . $search . '%');
+            })->orWhereHas('tujuan_pembelajaran', function ($q) use ($search) {
+                $q->where('tujuan_pembelajaran', 'like', '%' . $search . '%');
+            });
+        })
+        ->orderBy('tahun', 'desc')
+        ->paginate(10);
+
+    return view('assesment.index', compact('assesment'));
+}
     public function create()
     {
         $siswa = Siswa::all();
@@ -37,15 +47,16 @@ class AssesmentController extends Controller
     public function store(Request $request)
 {
     $request->validate([
-        'NIS' => 'required',
-        'id_tp' => 'required',
-        'tempat_waktu' => 'required',
-        'kejadian_teramati' => 'required',
-        'minggu' => 'required',
-        'bulan' => 'required',
-        'tahun' => 'required|integer',
-        'semester' => 'required',
-    ]);
+    'NIS' => 'required',
+    'id_tp' => 'required',
+    'tempat_waktu' => 'required',
+    'kejadian_teramati' => 'required',
+    'minggu' => 'required',
+    'bulan' => 'required',
+    'tahun' => 'required|integer',
+    'semester' => 'required|in:1,2',
+]);
+
 
     // Generate ID seperti di create
     $last = Assesment::orderBy('id_assesment', 'desc')->first();
@@ -75,15 +86,19 @@ class AssesmentController extends Controller
     public function update(Request $request, $id_assesment)
     {
         $request->validate([
-            'NIS' => 'required',
-            'id_tp' => 'required',
-            'tempat_waktu' => 'required',
-            'kejadian_teramati' => 'required',
-            'minggu' => 'required',
-            'bulan' => 'required',
-            'tahun' => 'required|integer',
-            'semester' => 'required',
-        ]);
+    'NIS' => 'required',
+    'id_tp' => 'required',
+    'sudah_muncul' => 'required|in:0,1',
+    'konteks' => 'required|string|max:255',
+    'tempat_waktu' => 'required|string|max:255',
+    'kejadian_teramati' => 'required|string',
+    'minggu' => 'required|string|max:50',
+    'bulan' => 'required|string|max:50',
+    'tahun' => 'required|integer',
+    'semester' => 'required|in:1,2',
+]);
+
+
 
         $assesment = Assesment::findOrFail($id_assesment);
         $assesment->update($request->all());

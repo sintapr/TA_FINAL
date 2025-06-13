@@ -5,6 +5,7 @@
 @section('content')
 <div class="row page-titles mx-0 align-items-center justify-content-between">
     <div class="col-auto">
+        <!-- Tombol Tambah -->
         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambahGuru">
             <i class="fa fa-plus"></i> Tambah @yield('title')
         </button>
@@ -29,7 +30,10 @@
                         value="{{ request('search') }}">
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-secondary" type="submit"><i class="fa fa-search"></i> Cari</button>
+                    <!-- Tombol Cari -->
+                    <button class="btn btn-primary w-100" type="submit">
+                        <i class="fa fa-search"></i> Cari
+                    </button>
                 </div>
             </form>
 
@@ -78,7 +82,7 @@
                         <td>
                             {{-- Lihat detail hanya admin --}}
                             @if (auth('guru')->check() && auth('guru')->user()->jabatan === 'admin')
-                                <a href="{{ route('guru.show', $item->NIP) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('guru.show', $item->NIP) }}" class="btn btn-success btn-sm" title="Lihat Detail">
                                     <i class="fa fa-eye"></i>
                                 </a>
                             @endif
